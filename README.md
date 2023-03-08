@@ -1,12 +1,12 @@
 # secrets-to-env
 
 <p align="center">
-  <a href="https://github.com/oNaiPs/secrets-to-env-action/actions"><img alt="secrets-to-env-action status" src="https://github.com/oNaiPs/secrets-to-env-action/workflows/build-test/badge.svg"></a>
+  <a href="https://github.com/RaphaelNeumann/json-to-env-action/actions"><img alt="secrets-to-env-action status" src="https://github.com/RaphaelNeumann/json-to-env-action/workflows/build-test/badge.svg"></a>
 </p>
 
 This action provides the following functionality for GitHub Actions users:
 
-- Read Github secrets and export **all** of them as environment variables
+- Read json (key-value pairs) and export **all** of them as environment variables
 - Optionally including, excluding and manipulating variables as needed before importing
 
 <table>
@@ -35,9 +35,9 @@ After
 
 <td>
 <pre>
-- uses: oNaiPs/secrets-to-env-action@v1
+- uses: RaphaelNeumann/json-to-env-action@v1
   with:
-    secrets: ${{ toJSON(secrets) }}
+    json_envs: ${{ toJSON(secrets) }}
 - run: echo "Value of MY_SECRET1: $MY_SECRET1"
 </pre>
 </td>
@@ -50,54 +50,36 @@ After
 Add the following action to your workflow:
 
 ```yaml
-- uses: oNaiPs/secrets-to-env-action@v1
+- uses: RaphaelNeumann/json-to-env-action@v1
   with:
-    secrets: ${{ toJSON(secrets) }}
+    json_envs: ${{ toJSON(secrets) }}
 ```
 
 After running this action, subsequent actions will be able to access the secrets as env variables.
-Note the `secrets` key. It is **mandatory** so the action can read and export the secrets.
+Note the `json_envs` key. It is **mandatory** so the action can read and export the secrets, vars for example.
 
-**Basic:**
+**Basic using secrets:**
 
 ```yaml
 steps:
 - uses: actions/checkout@v3
-- uses: oNaiPs/secrets-to-env-action@v1
+- uses: RaphaelNeumann/json-to-env-action@v1
   with:
-    secrets: ${{ toJSON(secrets) }}
+    json_envs: ${{ toJSON(secrets) }}
 - run: echo "Value of MY_SECRET: $MY_SECRET"
 ```
 
-**Include or exclude secrets:**
-
-Exclude defined secret(s) from list of secrets (comma separated, supports regex).
+**Basic using Enviroment Variables:**
 
 ```yaml
+enviroment: production
 steps:
 - uses: actions/checkout@v3
-- uses: oNaiPs/secrets-to-env-action@v1
+- uses: RaphaelNeumann/json-to-env-action@v1
   with:
-    secrets: ${{ toJSON(secrets) }}
-    exclude: MY_SECRET, MY_OTHER_SECRETS*
-# MY_SECRET is not exported
+    json_envs: ${{ toJSON(vars) }}
+- run: echo "Value of PRODUCTION_ENV_VAR: $PRODUCTION_ENV_VAR"
 ```
-
-**Only** include secret(s) from list of secrets (comma separated, supports regex).
-
-```yaml
-steps:
-- uses: actions/checkout@v3
-- uses: oNaiPs/secrets-to-env-action@v1
-  with:
-    secrets: ${{ toJSON(secrets) }}
-    include: MY_SECRET, MY_OTHER_SECRETS*
-- run: echo "Value of MY_SECRET: $MY_SECRET"
-```
-
-To export secrets that start with a given string, you can use `include: PREFIX_*`.
-
-NOTE: If specified secret does not exist, it is ignored.
 
 **Add a prefix:**
 
@@ -106,9 +88,9 @@ Adds a prefix to all exported secrets.
 ```yaml
 steps:
 - uses: actions/checkout@v3
-- uses: oNaiPs/secrets-to-env-action@v1
+- uses: RaphaelNeumann/json-to-env-action@v1
   with:
-    secrets: ${{ toJSON(secrets) }}
+    json_envs: ${{ toJSON(secrets) }}
     prefix: PREFIXED_
 - run: echo "Value of PREFIXED_MY_SECRET: $PREFIXED_MY_SECRET"
 ```
@@ -121,9 +103,9 @@ Available: `lower, upper, camel, constant, pascal, snake`.
 ```yaml
 steps:
 - uses: actions/checkout@v3
-- uses: oNaiPs/secrets-to-env-action@v1
+- uses: RaphaelNeumann/json-to-env-action@v1
   with:
-    secrets: ${{ toJSON(secrets) }}
+    json_envs: ${{ toJSON(secrets) }}
     convert: lower
 - run: echo "Value of my_secret: $my_secret"
 ```
@@ -133,9 +115,9 @@ steps:
 ```yaml
 steps:
 - uses: actions/checkout@v3
-- uses: oNaiPs/secrets-to-env-action@v1
+- uses: RaphaelNeumann/json-to-env-action@v1
   with:
-    secrets: ${{ toJSON(secrets) }}
+    json_envs: ${{ toJSON(secrets) }}
     prefix: PREFIX_
     convert: lower
     convert_prefix: false
@@ -145,14 +127,14 @@ steps:
 
 ## How it works
 
-This action uses the input in `secrets` to read all the secrets in the JSON format, and exporting all the variables one by one.
+This action uses the input in `json_envs` to read a JSON in key-value pairs format, and exporting all the variables one by one.
 
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE)
 
 ## Contributions
-
 Contributions are welcome! Past contributors:
 
 - Tamas Kadar @KTamas
+- José Luis Pereira @oNaiPs

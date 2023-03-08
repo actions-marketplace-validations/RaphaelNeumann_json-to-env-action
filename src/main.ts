@@ -21,7 +21,7 @@ export default async function run(): Promise<void> {
   ]
 
   try {
-    const secretsJson: string = core.getInput('secrets', {
+    const envsJson: string = core.getInput('json_envs', {
       required: true
     })
     const keyPrefix: string = core.getInput('prefix')
@@ -33,16 +33,12 @@ export default async function run(): Promise<void> {
       ? convertPrefixStr === 'true'
       : true
 
-    let secrets: Record<string, string>
+    let env_vars: Record<string, string>
     try {
-      secrets = JSON.parse(secretsJson)
+      env_vars = JSON.parse(envsJson)
     } catch (e) {
-      throw new Error(`Cannot parse JSON secrets.
-Make sure you add the following to this action:
-
-with:
-      secrets: \${{ toJSON(secrets) }}
-`)
+      throw new Error(`Cannot parse JSON.
+Make sure you pass a valid key:value pairs JSON`)
     }
 
     let includeList: string[] | null = null
@@ -59,7 +55,7 @@ with:
     core.debug(`Using include list: ${includeList?.join(', ')}`)
     core.debug(`Using exclude list: ${excludeList.join(', ')}`)
 
-    for (const key of Object.keys(secrets)) {
+    for (const key of Object.keys(env_vars)) {
       if (includeList && !includeList.some(inc => key.match(new RegExp(inc)))) {
         continue
       }
@@ -92,7 +88,7 @@ with:
         core.warning(`Will re-write "${newKey}" environment variable.`)
       }
 
-      core.exportVariable(newKey, secrets[key])
+      core.exportVariable(newKey, env_vars[key])
       core.info(`Exported secret ${newKey}`)
     }
   } catch (error) {
