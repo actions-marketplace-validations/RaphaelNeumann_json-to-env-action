@@ -59,7 +59,7 @@ function run() {
             'github_token'
         ];
         try {
-            const secretsJson = core.getInput('secrets', {
+            const envsJson = core.getInput('json_envs', {
                 required: true
             });
             const keyPrefix = core.getInput('prefix');
@@ -70,17 +70,13 @@ function run() {
             const convertPrefix = convertPrefixStr.length
                 ? convertPrefixStr === 'true'
                 : true;
-            let secrets;
+            let env_vars;
             try {
-                secrets = JSON.parse(secretsJson);
+                env_vars = JSON.parse(envsJson);
             }
             catch (e) {
-                throw new Error(`Cannot parse JSON secrets.
-Make sure you add the following to this action:
-
-with:
-      secrets: \${{ toJSON(secrets) }}
-`);
+                throw new Error(`Cannot parse JSON.
+Make sure you pass a valid key:value pairs JSON`);
             }
             let includeList = null;
             if (includeListStr.length) {
@@ -91,7 +87,7 @@ with:
             }
             core.debug(`Using include list: ${includeList === null || includeList === void 0 ? void 0 : includeList.join(', ')}`);
             core.debug(`Using exclude list: ${excludeList.join(', ')}`);
-            for (const key of Object.keys(secrets)) {
+            for (const key of Object.keys(env_vars)) {
                 if (includeList && !includeList.some(inc => key.match(new RegExp(inc)))) {
                     continue;
                 }
@@ -113,7 +109,7 @@ with:
                 if (process.env[newKey]) {
                     core.warning(`Will re-write "${newKey}" environment variable.`);
                 }
-                core.exportVariable(newKey, secrets[key]);
+                core.exportVariable(newKey, env_vars[key]);
                 core.info(`Exported secret ${newKey}`);
             }
         }

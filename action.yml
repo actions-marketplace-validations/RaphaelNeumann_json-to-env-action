@@ -1,22 +1,22 @@
-name: 'Export all secrets to env variables'
-description: 'Utility action that exports all github secrets to environment variables'
-author: 'Jose Pereira @oNaiPs'
+name: 'Export a key-value pair JSON to env variables'
+description: 'Utility action that exports JSON in key-value pair format to environment variables'
+author: 'Raphael Neumann @Raphaelneumann'
 inputs:
-  secrets:
+  json_envs:
     required: true
-    description: JSON representation of the secrets, use provided placeholder'
+    description: JSON in ey-value pair format (like secrets or vars) to be exported to enviroment variables'
   prefix:
     required: false
-    description: 'Prefix to add to all secrets, e.g.: SECRET_'
+    description: 'Prefix to add to all varibles, e.g.: VARS_'
   include:
     required: false
-    description: 'Comma-separated list of secrets to export'
+    description: 'Comma-separated list of keys to export'
   exclude:
     required: false
-    description: 'Comma-separated list of secrets to skip exporting'
+    description: 'Comma-separated list of key to skip exporting'
   convert:
     required: false
-    description: 'Converts secrets name to a specific string format'
+    description: 'Converts key name to a specific string format'
   convert_prefix:
     required: false
     description: 'Include prefix (or not) on conversion. True by default'
